@@ -12,12 +12,22 @@ export default function Snowfall() {
     snowflakes.forEach((snowflake) => {
       const randomX = Math.random() * 100; // Random horizontal position as a percentage
       const randomDelay = Math.random() * 10; // Delay between 0s and 10s
-      const randomDuration = 10 + Math.random() * 10; // Duration between 10s and 20s
+      const randomFallDuration = 10 + Math.random() * 10; // Falling duration between 10s and 20s
 
-      // Apply styles
-      snowflake.style.left = `${randomX}%`; // Horizontal position as percentage
-      snowflake.style.animationDelay = `${randomDelay}s`; // Delay
-      snowflake.style.animationDuration = `${randomDuration}s`; // Duration
+      const shouldRotate = Math.random() < 0.8; // 80% chance to rotate
+      const rotationDirection =
+        Math.random() < 0.5 ? "Clockwise" : "Counterclockwise"; // Randomize rotation direction
+
+      // Apply position and delay for all snowflakes
+      snowflake.style.left = `${randomX}%`;
+      snowflake.style.animationDelay = `${randomDelay}s`;
+      snowflake.style.animationDuration = `${randomFallDuration}s`;
+
+      if (shouldRotate) {
+        snowflake.style.animationName = `fallAndRotate${rotationDirection}`;
+      } else {
+        snowflake.style.animationName = "fall";
+      }
     });
   }, []);
 
