@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+.snowflake {
+  @apply text-white text-2xl opacity-90;
+  position: absolute;
+  top: -50px; /* Start slightly above the viewport */
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0); /* Start from the top */
+  }
+  100% {
+    transform: translateY(
+      calc(100vh + 50px)
+    ); /* Fall beyond the bottom of the viewport */
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
