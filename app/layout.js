@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="bg-blue-500 overflow-hidden">
-        <div className="relative z-20 flex flex-col items-center justify-center h-screen text-center text-white">
+        <div className="relative z-20 flex flex-col items-center justify-center h-svh text-center text-white">
           {children}
         </div>
       </body>
