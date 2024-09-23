@@ -13,6 +13,7 @@ import {
   faKeyboard,
   faImage,
   faVideo,
+  faCircleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import getStatusForDay from "../functions/getStatusForDay";
 import ModalContainer from "../components/ModalContainer";
@@ -137,6 +138,12 @@ export default function ChildPage({ params }) {
               <FontAwesomeIcon icon={faImage} />
             </button>
           </div>
+          <button
+            onClick={() => setTaskModalOpen(false)}
+            className="mt-3 px-6 py-3 bg-red-500 hover:bg-red-700 text-white rounded transition duration-300 ease-in-out flex items-center gap-3"
+          >
+            Close <FontAwesomeIcon className="text-xl" icon={faCircleXmark} />
+          </button>
         </div>
       </ModalContainer>
     </>
