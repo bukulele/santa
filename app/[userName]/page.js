@@ -10,11 +10,17 @@ import {
   faGift,
   faCandyCane,
   faTree,
+  faKeyboard,
+  faImage,
+  faVideo,
 } from "@fortawesome/free-solid-svg-icons";
 import getStatusForDay from "../functions/getStatusForDay";
+import ModalContainer from "../components/ModalContainer";
+import Image from "next/image";
 
 export default function ChildPage({ params }) {
   const [musicOn, setMusicOn] = useState(false);
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
   const { userName } = params;
   const calendarLength = 31; // Or 31 based on parent selection
 
@@ -31,8 +37,11 @@ export default function ChildPage({ params }) {
   const [phrase, setPhrase] = useState("");
 
   const handleMusicPlay = () => {
-    console.log("handleMusicPlay");
     setMusicOn(!musicOn);
+  };
+
+  const handleTaskOpen = () => {
+    setTaskModalOpen(true);
   };
 
   useEffect(() => {
@@ -69,6 +78,7 @@ export default function ChildPage({ params }) {
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4">
             {days.map((dayObj, index) => (
               <div
+                onClick={dayObj.status === "locked" ? null : handleTaskOpen}
                 key={index}
                 className={`relative p-4 rounded-lg shadow-lg text-center ${
                   dayObj.status === "locked"
@@ -95,6 +105,40 @@ export default function ChildPage({ params }) {
           </div>
         </div>
       </div>
+      <ModalContainer
+        modalIsOpen={taskModalOpen}
+        setModalClose={() => setTaskModalOpen(false)}
+      >
+        <div className="flex flex-col items-center justify-center gap-2">
+          <Image
+            alt="Christmas tree icon"
+            src="/c-tree-presents.png"
+            height={100}
+            width={100}
+          />
+          <p className="font-extrabold text-center">Task Name</p>
+          <p className="text-center">
+            Doloribus architecto aut doloremque. Exercitationem possimus quia
+            repudiandae similique. Eligendi fugit facere officiis inventore
+            eaque voluptatum nesciunt. Quidem doloremque minus animi ab rerum
+            officia incidunt. Et hic omnis quia.
+          </p>
+          <div className="flex justify-center items-center gap-3">
+            <button className="px-2 py-1 rounded text-white bg-red-300">
+              <FontAwesomeIcon icon={faMusic} />
+            </button>
+            <button className="px-2 py-1 rounded text-white bg-lime-300">
+              <FontAwesomeIcon icon={faVideo} />
+            </button>
+            <button className="px-2 py-1 rounded text-white bg-blue-300">
+              <FontAwesomeIcon icon={faKeyboard} />
+            </button>
+            <button className="px-2 py-1 rounded text-white bg-orange-300">
+              <FontAwesomeIcon icon={faImage} />
+            </button>
+          </div>
+        </div>
+      </ModalContainer>
     </>
   );
 }
