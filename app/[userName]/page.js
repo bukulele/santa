@@ -54,33 +54,35 @@ export default function ChildPage({ params }) {
           {phrase}
         </div>
 
-        {/* Responsive Advent Calendar */}
-        <div className="w-full max-w-4xl grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4">
-          {days.map((dayObj, index) => (
-            <div
-              key={index}
-              className={`relative p-4 rounded-lg shadow-lg text-center ${
-                dayObj.status === "locked"
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : dayObj.status === "done"
-                  ? "bg-green-300"
-                  : "bg-red-300 cursor-pointer hover:bg-red-400"
-              }`}
-            >
-              {/* Icon based on status */}
-              <FontAwesomeIcon
-                icon={
+        {/* Responsive Advent Calendar with vertical scroll */}
+        <div className="w-full max-w-4xl overflow-y-auto">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4">
+            {days.map((dayObj, index) => (
+              <div
+                key={index}
+                className={`relative p-4 rounded-lg shadow-lg text-center ${
                   dayObj.status === "locked"
-                    ? faQuestionCircle
+                    ? "bg-gray-300 cursor-not-allowed"
                     : dayObj.status === "done"
-                    ? faPlus
-                    : faGift
-                }
-                className="text-3xl text-white mb-2"
-              />
-              <span className="text-xl font-bold">{dayObj.day}</span>
-            </div>
-          ))}
+                    ? "bg-green-300"
+                    : "bg-red-300 cursor-pointer hover:bg-red-400"
+                }`}
+              >
+                {/* Icon based on status */}
+                <FontAwesomeIcon
+                  icon={
+                    dayObj.status === "locked"
+                      ? faQuestionCircle
+                      : dayObj.status === "done"
+                      ? faPlus
+                      : faGift
+                  }
+                  className="text-3xl text-white mb-2"
+                />
+                <span className="text-xl font-bold">{dayObj.day}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </>
