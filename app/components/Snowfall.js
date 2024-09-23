@@ -35,7 +35,7 @@ export default function Snowfall() {
     <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-10">
       {Array.from({ length: 100 }).map((_, index) => (
         <div key={index} className="snowflake absolute">
-          <FontAwesomeIcon icon={faSnowflake} />
+          <FontAwesomeIcon className="text-xs" icon={faSnowflake} />
         </div>
       ))}
     </div>

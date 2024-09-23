@@ -10,7 +10,10 @@ import {
   faGift,
   faPlus,
   faQuestionCircle,
+  faCandyCane,
+  faTree,
 } from "@fortawesome/free-solid-svg-icons";
+import getStatusForDay from "../functions/getStatusForDay";
 
 export default function ChildPage({ params }) {
   const { userName } = params;
@@ -72,10 +75,10 @@ export default function ChildPage({ params }) {
                 <FontAwesomeIcon
                   icon={
                     dayObj.status === "locked"
-                      ? faQuestionCircle
+                      ? faGift
                       : dayObj.status === "done"
-                      ? faPlus
-                      : faGift
+                      ? faCandyCane
+                      : faTree
                   }
                   className="text-3xl text-white mb-2"
                 />
@@ -87,12 +90,4 @@ export default function ChildPage({ params }) {
       </div>
     </>
   );
-}
-
-// Placeholder function to determine the status of each day
-function getStatusForDay(day) {
-  const today = new Date().getDate();
-  if (day > today) return "locked";
-  if (day === today) return "available";
-  return "done";
 }
