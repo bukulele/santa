@@ -8,14 +8,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMusic,
   faGift,
-  faPlus,
-  faQuestionCircle,
   faCandyCane,
   faTree,
 } from "@fortawesome/free-solid-svg-icons";
 import getStatusForDay from "../functions/getStatusForDay";
 
 export default function ChildPage({ params }) {
+  const [musicOn, setMusicOn] = useState(false);
   const { userName } = params;
   const calendarLength = 31; // Or 31 based on parent selection
 
@@ -30,6 +29,11 @@ export default function ChildPage({ params }) {
 
   // Randomly select a phrase
   const [phrase, setPhrase] = useState("");
+
+  const handleMusicPlay = () => {
+    console.log("handleMusicPlay");
+    setMusicOn(!musicOn);
+  };
 
   useEffect(() => {
     const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
@@ -47,8 +51,11 @@ export default function ChildPage({ params }) {
       <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-500 to-blue-800 p-4">
         {/* Music Toggle in the Top Right Corner */}
         <div className="absolute top-4 right-4">
-          <button className="text-white text-2xl">
-            <FontAwesomeIcon icon={faMusic} />
+          <button className="text-white text-2xl" onClick={handleMusicPlay}>
+            <FontAwesomeIcon
+              className={musicOn ? "text-white" : "text-red-300"}
+              icon={faMusic}
+            />
           </button>
         </div>
 
@@ -65,10 +72,10 @@ export default function ChildPage({ params }) {
                 key={index}
                 className={`relative p-4 rounded-lg shadow-lg text-center ${
                   dayObj.status === "locked"
-                    ? "bg-gray-300 cursor-not-allowed"
+                    ? "bg-gray-300"
                     : dayObj.status === "done"
-                    ? "bg-green-300"
-                    : "bg-red-300 cursor-pointer hover:bg-red-400"
+                    ? "bg-green-300 hover:bg-green-400"
+                    : "bg-red-300 hover:bg-red-400"
                 }`}
               >
                 {/* Icon based on status */}
