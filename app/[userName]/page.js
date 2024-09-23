@@ -58,7 +58,7 @@ export default function ChildPage({ params }) {
   return (
     <>
       <Snowfall />
-      <div className="w-full relative flex flex-col items-center justify-center min-h-svh bg-gradient-to-b from-blue-500 to-blue-800 p-4">
+      <div className="w-full relative flex flex-col items-center justify-center min-h-svh p-4">
         {/* Music Toggle in the Top Right Corner */}
         <div className="absolute top-4 right-4">
           <button className="text-white text-2xl" onClick={handleMusicPlay}>
