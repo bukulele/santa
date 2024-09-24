@@ -28,6 +28,8 @@ export default function ParentsCorner() {
   ];
   const children = childrenColors;
 
+  const handleAddChild = () => {};
+
   return (
     <div className="flex flex-col items-center w-full gap-3 overflow-y-auto p-2">
       <Snowfall />
