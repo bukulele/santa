@@ -3,12 +3,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 
-export default function ChildrenTile({ color, hoverColor }) {
+export default function ChildrenTile({ color, hoverColor, onClick }) {
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleEditChild = () => {
-    console.log("handleEditChild");
-  };
 
   return (
     <div
@@ -19,7 +15,7 @@ export default function ChildrenTile({ color, hoverColor }) {
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={handleEditChild}
+      onClick={onClick}
     >
       <Image
         alt="child avatar"
