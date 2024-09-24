@@ -34,6 +34,7 @@ function ModalContainer({ modalIsOpen, children, setModalClose }) {
     <AnimatePresence>
       {modalIsOpen && (
         <Modal
+          ariaHideApp={false}
           isOpen={modalIsOpen}
           contentLabel="Modal Popup"
           shouldCloseOnEsc={true}
