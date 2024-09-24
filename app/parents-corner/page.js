@@ -29,7 +29,7 @@ export default function ParentsCorner() {
   const children = childrenColors;
 
   return (
-    <div className="flex flex-col items-center w-full gap-3">
+    <div className="flex flex-col items-center w-full gap-3 overflow-y-auto p-2">
       <Snowfall />
       <SettingsBlock>
         <div className="w-full flex gap-2">
