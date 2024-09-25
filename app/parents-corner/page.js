@@ -161,15 +161,6 @@ export default function ParentsCorner() {
           >
             {isSigningUp ? "Sign Up" : "Login"}
           </button>
-          {!isSigningUp && (
-            <button
-              type="button"
-              className="text-blue-500 underline mt-2"
-              onClick={handleResendVerification}
-            >
-              Resend Verification Email
-            </button>
-          )}
           <p className="text-center">
             {isSigningUp ? (
               <>
@@ -195,6 +186,15 @@ export default function ParentsCorner() {
               </>
             )}
           </p>
+          {!isSigningUp && (
+            <button
+              type="button"
+              className="text-blue-300 underline mt-2 text-xs"
+              onClick={handleResendVerification}
+            >
+              Resend Verification Email
+            </button>
+          )}
         </form>
       </ModalContainer>
     </div>
