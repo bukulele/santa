@@ -11,8 +11,10 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  onAuthStateChanged,
 } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function ParentsCorner() {
   const [longCalendar, setLongCalendar] = useState(false);
@@ -21,7 +23,48 @@ export default function ParentsCorner() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
-  const [isSigningUp, setIsSigningUp] = useState(false); // Toggle between login and sign-up
+  const [isSigningUp, setIsSigningUp] = useState(false);
+  const [user, setUser] = useState(null);
+  const [parentData, setParentData] = useState(null);
+
+  const fetchParentData = async (uid) => {
+    try {
+      const parentDocRef = doc(db, "parents", uid);
+      const parentDoc = await getDoc(parentDocRef);
+
+      if (parentDoc.exists()) {
+        const parentData = parentDoc.data();
+        console.log(parentData);
+        setParentData(parentData);
+
+        // Set calendar length based on fetched data
+        setLongCalendar(parentData.calendarLength === 31);
+
+        // Generate tasks based on calendar length
+        // generateTasks(parentData.calendarLength);
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error fetching parent data:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Firebase Auth listener
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        setPasswordEntered(true); // User is logged in
+        await fetchParentData(currentUser.uid); // Fetch parent data
+      } else {
+        setUser(null);
+        setPasswordEntered(false); // User is not logged in
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup the listener on component unmount
+  }, []);
 
   useEffect(() => {
     let tasksLength = 24;
@@ -71,6 +114,11 @@ export default function ParentsCorner() {
 
       // Send email verification
       await sendEmailVerification(user);
+
+      // Create a document in the "parents" collection with the user's UID
+      await setDoc(doc(db, "parents", user.uid), {
+        longCalendar: false, // Default value
+      });
 
       setPasswordEntered(false); // Keep the modal open
       setAuthError(""); // Clear any previous errors
