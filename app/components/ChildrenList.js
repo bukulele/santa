@@ -36,11 +36,12 @@ export default function ChildrenList() {
     name: "",
     sex: "male",
   }); // Form data
+  const [authError, setAuthError] = useState("");
 
   const handleAddChild = () => {
     const newChild =
       childrenColors[getRandomNumber(0, childrenColors.length - 1)];
-    setChildren([...children, newChild]);
+    // setChildren([...children, newChild]);
     setIsEditing(false);
     setShowChildModal(true);
   };
@@ -59,6 +60,12 @@ export default function ChildrenList() {
   };
 
   const handleSaveChild = async () => {
+    // Validate that the name field is not empty
+    if (!childData.name.trim()) {
+      setAuthError("Name is required.");
+      return;
+    }
+
     // Save child to Firestore
     const user = auth.currentUser;
     if (!user) return;
@@ -81,7 +88,7 @@ export default function ChildrenList() {
         imageContent: "",
         imageSrc: "",
         status: "locked",
-        text: "",
+        text: `test task ${i}`,
         textContent: "",
         videoContent: "",
       });
@@ -125,18 +132,19 @@ export default function ChildrenList() {
             onChange={(e) =>
               setChildData({ ...childData, avatarSrc: e.target.value })
             }
-            required
           />
           <input
             type="text"
             placeholder="Name"
             className="p-2 border rounded"
             value={childData.name}
-            onChange={(e) =>
-              setChildData({ ...childData, name: e.target.value })
-            }
+            onChange={(e) => {
+              setChildData({ ...childData, name: e.target.value });
+              setAuthError(""); // Clear the error when the user starts typing
+            }}
             required
           />
+          {authError && <p className="text-red-500 text-center">{authError}</p>}
           <div className="flex gap-4">
             <label>
               <input
