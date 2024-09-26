@@ -6,6 +6,7 @@ import getRandomNumber from "../functions/getRandomNumber";
 import ModalContainer from "./ModalContainer";
 import { db, auth } from "@/lib/firebase";
 import { doc, setDoc, collection } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function ChildrenList() {
   const childrenColors = [
@@ -37,6 +38,29 @@ export default function ChildrenList() {
     sex: "male",
   }); // Form data
   const [authError, setAuthError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setLoading(true); // Show loading spinner
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const storage = getStorage(); // Initialize Firebase Storage
+    const avatarRef = ref(storage, `avatars/${user.uid}/${file.name}`);
+
+    // Upload the file to Firebase Storage
+    await uploadBytes(avatarRef, file);
+
+    // Get the download URL and set it as the avatarSrc
+    const downloadURL = await getDownloadURL(avatarRef);
+    setChildData({ ...childData, avatarSrc: downloadURL });
+
+    setLoading(false); // Hide loading spinner
+  };
 
   const handleAddChild = () => {
     const newChild =
@@ -60,27 +84,23 @@ export default function ChildrenList() {
   };
 
   const handleSaveChild = async () => {
-    // Validate that the name field is not empty
     if (!childData.name.trim()) {
       setAuthError("Name is required.");
       return;
     }
 
-    // Save child to Firestore
     const user = auth.currentUser;
     if (!user) return;
 
     const parentDocRef = doc(db, "parents", user.uid);
     const childDocRef = doc(collection(parentDocRef, "children"));
 
-    // Save child data
     await setDoc(childDocRef, {
       avatarSrc: childData.avatarSrc,
       name: childData.name,
       sex: childData.sex,
     });
 
-    // Create 31 tasks in the "tasks" sub-collection
     for (let i = 1; i <= 31; i++) {
       const taskDocRef = doc(collection(childDocRef, "tasks"), `task_${i}`);
       await setDoc(taskDocRef, {
@@ -94,7 +114,7 @@ export default function ChildrenList() {
       });
     }
 
-    handleCloseModal(); // Close modal after saving
+    handleCloseModal();
   };
 
   const handleDeleteChild = async () => {
@@ -124,15 +144,32 @@ export default function ChildrenList() {
           <h2 className="text-2xl font-bold text-center">
             {isEditing ? "Edit Child" : "Add Child"}
           </h2>
-          <input
-            type="text"
-            placeholder="Avatar URL"
-            className="p-2 border rounded"
-            value={childData.avatarSrc}
-            onChange={(e) =>
-              setChildData({ ...childData, avatarSrc: e.target.value })
-            }
-          />
+          <div className="flex items-center gap-4">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+              id="avatarUpload"
+            />
+            <label
+              htmlFor="avatarUpload"
+              className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded cursor-pointer"
+            >
+              Load Avatar
+            </label>
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              childData.avatarSrc && (
+                <img
+                  src={childData.avatarSrc}
+                  alt="Avatar Preview"
+                  className="w-16 h-16 rounded-full"
+                />
+              )
+            )}
+          </div>
           <input
             type="text"
             placeholder="Name"
@@ -140,7 +177,7 @@ export default function ChildrenList() {
             value={childData.name}
             onChange={(e) => {
               setChildData({ ...childData, name: e.target.value });
-              setAuthError(""); // Clear the error when the user starts typing
+              setAuthError("");
             }}
             required
           />
