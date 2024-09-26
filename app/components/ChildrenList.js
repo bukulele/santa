@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChildrenTile from "../components/ChildrenTile";
 import getRandomNumber from "../functions/getRandomNumber";
 import ModalContainer from "./ModalContainer";
 import { db, auth } from "@/lib/firebase";
-import { doc, setDoc, collection } from "firebase/firestore";
+import { doc, setDoc, collection, getDocs } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function ChildrenList() {
@@ -29,7 +29,7 @@ export default function ChildrenList() {
     { color: "#fb7185", hoverColor: "#f43f5e" }, // Rose
   ];
 
-  const [children, setChildren] = useState(childrenColors);
+  const [children, setChildren] = useState([]);
   const [showChildModal, setShowChildModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false); // Toggle between create/edit mode
   const [childData, setChildData] = useState({
@@ -63,17 +63,12 @@ export default function ChildrenList() {
   };
 
   const handleAddChild = () => {
-    const newChild =
-      childrenColors[getRandomNumber(0, childrenColors.length - 1)];
-    // setChildren([...children, newChild]);
     setIsEditing(false);
     setShowChildModal(true);
   };
 
-  const handleEditChild = (index) => {
-    // Here we can populate the form for editing
-    const childToEdit = children[index];
-    setChildData(childToEdit); // Populate form with existing child data
+  const handleEditChild = (child) => {
+    setChildData(child); // Populate form with existing child data
     setIsEditing(true);
     setShowChildModal(true);
   };
@@ -101,6 +96,9 @@ export default function ChildrenList() {
       sex: childData.sex,
     });
 
+    // After saving, refresh the children list
+    setChildren([...children, { ...childData, id: childDocRef.id }]);
+
     for (let i = 1; i <= 31; i++) {
       const taskDocRef = doc(collection(childDocRef, "tasks"), `task_${i}`);
       await setDoc(taskDocRef, {
@@ -123,14 +121,44 @@ export default function ChildrenList() {
     handleCloseModal();
   };
 
+  // Fetch children data from Firestore on component mount
+  useEffect(() => {
+    const fetchChildren = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const parentDocRef = doc(db, "parents", user.uid);
+      const childrenCollectionRef = collection(parentDocRef, "children");
+
+      try {
+        const querySnapshot = await getDocs(childrenCollectionRef);
+        const childrenData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setChildren(childrenData);
+      } catch (error) {
+        console.error("Error fetching children: ", error);
+      }
+    };
+
+    fetchChildren();
+  }, []);
+
   return (
     <div className="flex flex-wrap justify-center gap-1">
-      {children.map((colorObj, index) => (
+      {children.map((child, index) => (
         <ChildrenTile
           key={`child_tile_${index}`}
-          color={colorObj.color}
-          hoverColor={colorObj.hoverColor}
-          onClick={() => handleEditChild(index)}
+          child={child}
+          color={
+            childrenColors[getRandomNumber(0, childrenColors.length - 1)].color
+          } // Use random color
+          hoverColor={
+            childrenColors[getRandomNumber(0, childrenColors.length - 1)]
+              .hoverColor
+          }
+          onClick={() => handleEditChild(child)}
         />
       ))}
       <button

@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
 
-export default function ChildrenTile({ color, hoverColor, onClick }) {
+export default function ChildrenTile({ color, child, hoverColor, onClick }) {
   const [isHovered, setIsHovered] = useState(false);
+
+  console.log(child);
 
   return (
     <div
@@ -25,7 +27,7 @@ export default function ChildrenTile({ color, hoverColor, onClick }) {
         className="bg-white rounded-full p-1"
       />
       <p className="font-bold m-0 leading-none text-white text-sm">
-        Name Surname
+        {child.name}
       </p>
     </div>
   );
